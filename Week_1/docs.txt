@@ -1,0 +1,89 @@
+1. Docker và Docker Compose
+Docker là gì?
+- Docker là một nền tảng mã nguồn mở giúp đóng gói, phân phối và chạy ứng dụng trong các container.
+- Container là môi trường cách ly nhẹ, chia sẻ kernel với hệ điều hành host nhưng vẫn tách biệt ứng dụng và thư viện. Điều này giúp ứng dụng chạy ổn định, không bị ảnh hưởng bởi môi trường bên ngoài.
+- Ưu điểm: Triển khai nhanh, nhất quán, dễ di chuyển giữa các môi trường (dev, test, prod), tiết kiệm tài nguyên hơn máy ảo, dễ mở rộng và rollback.
+- Nhược điểm: Một số ứng dụng/phần mềm đặc thù có thể không tương thích hoàn toàn với container.
+
+Các khái niệm chính:
+- Dockerfile: File mô tả cách xây dựng image (chỉ định OS, cài đặt phần mềm, lệnh khởi động...). Ví dụ:
+  ```Dockerfile
+  FROM ubuntu:20.04
+  RUN apt-get update && apt-get install -y python3
+  COPY . /app
+  CMD ["python3", "/app/main.py"]
+  ```
+- Image: Bản đóng gói ứng dụng + môi trường, có thể tái sử dụng nhiều lần. Image là "read-only".
+- Container: Thực thể đang chạy của image, có thể tạo/xóa/dừng/khởi động linh hoạt. Mỗi container là một instance độc lập.
+
+Docker Compose là gì?
+- Docker Compose là công cụ giúp định nghĩa và quản lý nhiều container cùng lúc bằng file YAML (docker-compose.yml).
+- Lợi ích: Dễ dàng khởi động, dừng, cấu hình nhiều dịch vụ liên quan chỉ với một lệnh (docker compose up).
+- Ứng dụng: Phù hợp cho các ứng dụng microservices, môi trường phát triển cần nhiều thành phần (web, db, cache...).
+- Ví dụ file docker-compose.yml:
+  ```yaml
+  version: '3'
+  services:
+    web:
+      image: myweb:latest
+      ports:
+        - "8080:80"
+    db:
+      image: mysql:5.7
+      environment:
+        MYSQL_ROOT_PASSWORD: example
+  ```
+
+2. Linux vs Unix vs BSD vs *nix, macOS thuộc loại nào?
+- Unix: Hệ điều hành ra đời từ thập niên 1970, là nền tảng gốc cho nhiều hệ điều hành khác. Đặc trưng: đơn giản, triết lý "mọi thứ là file", đa nhiệm, đa người dùng.
+- Linux: Chỉ là kernel do Linus Torvalds phát triển (1991), thường được phân phối kèm GNU userland → tạo thành “Linux distro” (Ubuntu, Fedora, …). Linux là Unix-like chứ không phải Unix gốc.
+- BSD (Berkeley Software Distribution): Hệ điều hành phát triển từ Unix tại Đại học Berkeley, hiện có các nhánh như FreeBSD, OpenBSD, NetBSD. BSD cũng là Unix-like, có giấy phép BSD mở hơn GPL của Linux.
+- *nix: Thuật ngữ chung cho các hệ điều hành “giống Unix” (Unix-like), bao gồm cả Linux, BSD, macOS…
+- macOS: Dựa trên Darwin (kernel XNU + nhiều thành phần BSD), đã được chứng nhận UNIX 03 → tức là macOS là Unix chính thống.
+
+Bảng so sánh:
+| Tiêu chí      | Unix gốc      | Linux         | BSD           | macOS        |
+|--------------|---------------|---------------|---------------|--------------|
+| Nguồn gốc    | Bell Labs     | Linus Torvalds| ĐH Berkeley   | Apple        |
+| Giấy phép    | Đóng/mở       | GPL           | BSD           | Đóng         |
+| Unix-like    | Đúng          | Đúng          | Đúng          | Đúng         |
+| Chứng nhận UNIX| Có/Không     | Không         | Có/Không      | Có           |
+
+3. Alpine vs Ubuntu
+- Alpine Linux: Phân phối Linux rất nhẹ (image chỉ vài MB), dùng musl libc, thường dùng trong container để giảm kích thước. Tuy nhiên có thể gặp lỗi tương thích khi chạy một số phần mềm do không dùng glibc.
+- Ubuntu: Phân phối phổ biến, dựa trên Debian, image lớn hơn nhưng dễ dùng, nhiều phần mềm sẵn có, ít gặp lỗi tương thích.
+
+So sánh:
+| Tiêu chí      | Alpine           | Ubuntu           |
+|---------------|------------------|------------------|
+| Kích thước    | Rất nhỏ (5-10MB) | Lớn hơn (60-100MB)|
+| Tương thích   | Có thể hạn chế   | Rất tốt          |
+| Bảo mật       | Cao              | Tốt              |
+| Dùng cho      | Microservice     | Phát triển, server|
+| Thư viện C    | musl libc        | glibc            |
+
+- Lưu ý: Nếu cần image nhỏ, bảo mật, ít phần mềm → chọn Alpine. Nếu cần sự ổn định, dễ dùng, nhiều phần mềm → chọn Ubuntu.
+
+4. VNC (Virtual Network Computing)
+VNC là gì?
+- Giao thức điều khiển máy tính từ xa qua giao diện đồ họa (remote desktop).
+- Cho phép truyền hình ảnh màn hình từ server đến client, và nhận sự kiện bàn phím/chuột ngược lại.
+
+Thành phần:
+- VNC Server: Chạy trên máy cần điều khiển.
+- VNC Viewer/Client: Chạy trên máy người dùng.
+
+Nguyên lý hoạt động:
+- VNC truyền framebuffer (hình ảnh) từ server → client, và truyền ngược sự kiện bàn phím/chuột từ client → server.
+
+Ứng dụng:
+- Truy cập máy ảo, container, server không có màn hình vật lý.
+- Hỗ trợ làm việc từ xa, quản trị hệ thống, hỗ trợ kỹ thuật.
+
+Lưu ý bảo mật:
+- VNC không mã hóa mặc định → nên dùng kèm SSH tunnel hoặc VPN để bảo mật.
+- Không nên mở cổng VNC trực tiếp ra Internet.
+
+Ví dụ thực tế:
+- Dùng VNC để truy cập máy chủ Linux không có màn hình vật lý từ xa.
+- Dùng VNC để hỗ trợ người dùng gặp sự cố máy tính từ xa.
