@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  ubuntu-vnc:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ubuntu-vnc-desktop
+    ports:
+      - "5901:5901"  # VNC
+      - "2222:22"    # SSH
+    volumes:
+      - vnc_data:/home/vncuser
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+
+volumes:
+  vnc_data:
